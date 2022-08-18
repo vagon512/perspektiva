@@ -1,0 +1,135 @@
+/* style.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+}
+
+html {
+    background: #fcc;
+}
+
+#root {
+    min-width: 500px;
+}
+
+header {
+    color: #789;
+    text-align: right;
+    border-bottom: 2px dotted #789;
+    /* overflow: auto; св-во OVERFLOW с любым значением, кроме VISIBLE, позволяет родителю удержать плавающий элемент внутри себя */
+    line-height: 32px;
+    padding: 0 40px;
+    margin-bottom: 10px;
+}
+
+header img {
+    float: left;
+}
+
+nav {
+    padding: 10px 10px 0 20px;
+    color: #789;
+    background: #cfc;
+    float: left;
+    width: 270px;
+}
+
+nav ul {
+    padding-left: 20px;
+    list-style: none;
+    /* убрали маркеры */
+    font-family: Arial, sans-serif;
+}
+
+nav a {
+    color: #789;
+    text-decoration: none;
+    /* убрали подчеркивание ссылок */
+    border-bottom: 2px dotted #789;
+    display: block;
+    padding: 5px 0;
+    margin-bottom: 5px;
+}
+
+nav p {
+    font-size: 1.35em;
+    border-bottom: 2px dotted #789;
+    margin: 15px 0;
+}
+
+main {
+    background: #eee;
+    margin-left: 300px;
+    /* 270px это ширина блока nav + отступы 10px и 20px */
+}
+
+h1 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+main p {
+    padding: 0 40px 15px 10px;
+    font-family: Arial, sans-serif;
+}
+
+@media print {
+
+    html,
+    main {
+        background: transparent;
+    }
+
+    #root {
+        min-width: 0;
+    }
+
+    #for-print,
+    nav {
+        display: none;
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    main p {
+        padding: 0 0 15px 0;
+    }
+}
+
+/*
+   мой стационарный экран
+   1920 * 1080
+   
+   iphone 13
+   физическое разрешение 2532 * 1170 
+   css-разрешение 844 * 390
+   */
+
+@media (max-width: 576px) {
+
+    #root {
+        min-width: 0;
+    }
+
+    header {}
+
+    header img {}
+
+    nav {
+        float: none;
+        width: auto;
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+}

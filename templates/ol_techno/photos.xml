@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<jpgrotator>
+
+	<parameters>
+		<rotatetime>4</rotatetime>
+		<randomplay>true</randomplay>
+		<shownavigation>false</shownavigation>
+		<transition>blocks</transition>
+	</parameters>
+	
+	<photos>
+		<photo path="templates/ol_techno/images/header1.jpg" link="#" />
+		<photo path="templates/ol_techno/images/header2.jpg" link="#" />
+		<photo path="templates/ol_techno/images/header3.jpg" link="#" />
+		<photo path="templates/ol_techno/images/header4.jpg" link="#" />
+		<photo path="templates/ol_techno/images/header5.jpg" link="#" />
+	</photos>
+
+</jpgrotator>
