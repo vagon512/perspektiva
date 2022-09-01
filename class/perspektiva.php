@@ -4,21 +4,6 @@
 class Perspektiva
 {
 ////
-  private $step;
-  private $start;
-  private $totalRows;
-
-  public function setStep($step=9){
-      $this->step = $step;
-      return $this;
-  }
-
-  public function setStart($start=0){
-      $this->start = $start;
-      return $this;
-  }
-
-
 
   private function readXML(){
     $xml = simplexml_load_file(PATH_TO_XML);
@@ -287,27 +272,4 @@ class Perspektiva
       return $offer;
    }
 
-   public function checkingValuesForPagination(){
-      if(gettype($this->step) === 'integer' && gettype($this->start)==='integer'){
-          return true;
-      }
-      return false;
-   }
-
-   public function getPagination(){
-      $pagination = array('start'=>$this->start, 'step'=>$this->step);
-      return $pagination;
-   }
-
-   public function setTotalRows($pdo){
-      $querySelectCountColumn = "SELECT count(*) as total FROM offers";
-       $result = $pdo->prepare($querySelectCountColumn);
-       $result->execute();
-       $this->totalRows = $result->fetchColumn();
-      return $this->totalRows;
-   }
-
-   public function pagination(){
-      $this
-   }
 }

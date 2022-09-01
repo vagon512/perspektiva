@@ -53,10 +53,7 @@ require_once 'include/head.php';
 <?php
 $step   = $_GET['step'] > 0 ? $_GET['step'] : 9;
 $start  = $_GET['page'] > 1 ? ($_GET['page']-1)*$step : 0;
-if($perspektiva->setStep($step)->setStart($start)->checkingValuesForPagination() == true){
-    $pagination = $perspektiva->getPagination();
-    print_r($pagination);
-}
+
 if(!$_GET['offer_id']){
 
     $searchParameters = array();
