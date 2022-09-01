@@ -4,6 +4,20 @@
 class Perspektiva
 {
 ////
+  private $step;
+  private $start;
+  private $totalRows;
+
+  public function setStep($step=9){
+      $this->step = $step;
+      return $this;
+  }
+
+  public function setStart($start=0){
+      $this->start = $start;
+      return $this;
+  }
+
 
 
   private function readXML(){
@@ -185,7 +199,7 @@ class Perspektiva
 
 
   ////////////выборка данных
-    public function searchOffers($pdo, $price, $mortgage, $rooms, $type){
+    public function searchOffers($pdo, $price, $mortgage, $rooms, $type, int $limit, int $step){
 
       $data = array('price'=>$price, 'mortgage'=>$mortgage, 'rooms'=>$rooms, 'type'=>$type);
 //      echo $price."==".$mortgage."==".$rooms."==".$type."<br>";
@@ -195,7 +209,7 @@ class Perspektiva
                          FROM offers 
                              JOIN offer_type on offers.type=offer_type.type_id 
                              JOIN offer_property_type on offer_property_type.property_type_id=offers.property_type 
-                             JOIN offer_category on offers.category=offer_category.category_id  
+                             JOIN offer_category on offers.category=offer_category.category_id  LIMIT $limit,$step
                              ";
         }
         elseif ($price == "%" && ($mortgage == "%" || $rooms == "%" || $type == "%")){
@@ -208,7 +222,8 @@ class Perspektiva
                              JOIN offer_category on offers.category=offer_category.category_id  
                              WHERE offers.mortgage LIKE :mortgage
                              AND offers.rooms LIKE :rooms 
-                             AND offers.type LIKE :type ";
+                             AND offers.type LIKE :type 
+                             ";
         }
         else{
           $querySelectSalesOffers = "SELECT offers.*, offer_type.offer_name, offer_property_type.property_type_name, 
@@ -220,7 +235,8 @@ class Perspektiva
                              WHERE offers.price_value <= :price 
                              AND offers.mortgage LIKE :mortgage
                              AND offers.rooms LIKE :rooms 
-                             AND offers.type LIKE :type ";
+                             AND offers.type LIKE :type  
+                             ";
 
         }
 
@@ -269,5 +285,29 @@ class Perspektiva
 
        $offer = array_merge($offer, $allImages);
       return $offer;
+   }
+
+   public function checkingValuesForPagination(){
+      if(gettype($this->step) === 'integer' && gettype($this->start)==='integer'){
+          return true;
+      }
+      return false;
+   }
+
+   public function getPagination(){
+      $pagination = array('start'=>$this->start, 'step'=>$this->step);
+      return $pagination;
+   }
+
+   public function setTotalRows($pdo){
+      $querySelectCountColumn = "SELECT count(*) as total FROM offers";
+       $result = $pdo->prepare($querySelectCountColumn);
+       $result->execute();
+       $this->totalRows = $result->fetchColumn();
+      return $this->totalRows;
+   }
+
+   public function pagination(){
+      $this
    }
 }

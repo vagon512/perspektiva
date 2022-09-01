@@ -9,7 +9,7 @@ require_once 'include/head.php';
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
@@ -47,8 +47,16 @@ require_once 'include/head.php';
         </div>
     </div>
 <a href="sales.php"><button>сбросить</button></a>
+<a href="sales.php?step=9">показывать по 9</a>
+    <a href="sales.php?step=12">показывать по 12</a>
+    <a href="sales.php?step=18">показывать по 18</a>
 <?php
-
+$step   = $_GET['step'] > 0 ? $_GET['step'] : 9;
+$start  = $_GET['page'] > 1 ? ($_GET['page']-1)*$step : 0;
+if($perspektiva->setStep($step)->setStart($start)->checkingValuesForPagination() == true){
+    $pagination = $perspektiva->getPagination();
+    print_r($pagination);
+}
 if(!$_GET['offer_id']){
 
     $searchParameters = array();
@@ -64,8 +72,9 @@ if(!$_GET['offer_id']){
         $searchParameters['rooms']      = "%";
         $searchParameters['type']       = "%";
     }
-
-    $offers = $perspektiva->searchOffers($pdo, $searchParameters['price'], $searchParameters['mortgage'], $searchParameters['rooms'], $searchParameters['type']);
+    $step = $_GET['step']>0 ? $_GET['step'] : 9;
+    $offers = $perspektiva->searchOffers($pdo, $searchParameters['price'], $searchParameters['mortgage'],
+                                         $searchParameters['rooms'], $searchParameters['type'], $pagination['start'], $pagination['step']);
 
     ?>
         <div class="row">
@@ -104,78 +113,61 @@ else{
     $offers = $perspektiva->setOnceOffer($pdo, $_GET['offer_id']);
 ?>
     <div class="col-sm-6">
-        <div class="card" style="width: 25rem;" >
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="pic/stock.png" class="d-block w-100 img-fluid" alt="фотография" style="width:640px;height:360px">
+    <div class="card" style="width: 25rem;" >
+
+        <img src="pic/stock.png" class="d-block w-100 img-fluid" alt="фотография" data-bs-toggle="modal" data-bs-target="#photoset" style="width:640px;height:360px">
+
+        <!-- Modal -->
+        <div class="modal fade" id="photoset" tabindex="-1" aria-labelledby="photoset" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Фотографии</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <?php
+                                foreach ($offers['images'] as $image){
+                                    echo $image."<br>";
+                                    ?>
+                                    <div class="carousel-item ">
+                                        <img src="<?php echo $image; ?>" class="d-block w-100 " alt="фотография" style="width:360px;height:360px">
+                                    </div>
+                                    <?php
+                                }
+                                ?>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                                    data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Предыдущий</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                                    data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Следующий</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <?php
-                    foreach ($offers['images'] as $image){
-
-                        ?>
-                        <div class="carousel-item ">
-                            <img src="<?php echo $image; ?>" class="d-block w-100 " alt="фотография" style="width:360px;height:360px">
-                        </div>
-                        <?php
-                    }
-                    ?>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"  data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Предыдущий</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"  data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Следующий</span>
-                </button>
             </div>
         </div>
+
+
         <div class="card-body">
             <?php
             echo $offers[0]['creation_date']
             ?>
         </div>
     </div>
-    <section style="background-color: #eee;">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6 col-xl-4">
-                    <div class="card text-black">
-                        <i class="fab fa-apple fa-lg pt-3 pb-1 px-3"></i>
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/3.webp" class="card-img-top"
-                             alt="Apple Computer" />
-                        <div class="card-body">
-                            <div class="text-center">
-                                <h5 class="card-title">Believing is seeing</h5>
-                                <p class="text-muted mb-4">Apple pro display XDR</p>
-                            </div>
-                            <div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Pro Display XDR</span><span>$5,999</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Pro stand</span><span>$999</span>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <span>Vesa Mount Adapter</span><span>$199</span>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between total font-weight-bold mt-4">
-                                <span>Total</span><span>$7,197.00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
     <?php
 }
-echo "<pre>";
-print_r($offers);
-echo "</pre>";
+//echo "<pre>";
+//print_r($offers);
+//echo "</pre>";
 ?>
 
     </div>
