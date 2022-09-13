@@ -44,24 +44,6 @@ require_once 'include/head.php';
 //}
 //else{ echo "not number";}
 
-$step = 18;
-//if($perspektiva->setStep($step)->setStart($start)->checkingValuesForPagination() == true){
-//    $pagination = $perspektiva->getPagination();
-//    print_r($pagination);
-//}
-//else{
-//    echo "foooooo";
-//}
-$p = $_GET['pages'] > 1 ? $_GET['pages'] : 1;
-if($p > 1){
-    echo '<a href="?pages=1">1</a>'."&nbsp&nbsp...&nbsp&nbsp";
-}
-$total = $perspektiva->setTotalRows($pdo);
-$pages = ceil($total/$step);
-for($i = $p; $i<= $p+5; $i++){
-    echo '<a href="?pages='.$i.'">'.$i."</a>&nbsp&nbsp";
-}
 
-echo '...&nbsp&nbsp<a href="?pages='.$pages.'">'.$pages."</a>";
 require_once 'include/footer.php';
 ?>

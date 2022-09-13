@@ -1,5 +1,7 @@
 <?php
 require_once 'include/head.php';
+require_once "class/Pagination.php";
+$page = new pagination();
 ?>
 
     <!-- Button trigger modal -->
@@ -51,8 +53,11 @@ require_once 'include/head.php';
     <a href="sales.php?step=12">показывать по 12</a>
     <a href="sales.php?step=18">показывать по 18</a>
 <?php
-$step   = $_GET['step'] > 0 ? $_GET['step'] : 9;
+$step = $_GET['step']>0 ? $_GET['step'] : 9;
 $start  = $_GET['page'] > 1 ? ($_GET['page']-1)*$step : 0;
+$page->setStart($start);
+$page->setStep($step);
+$pagination = $page->getPagination();
 
 if(!$_GET['offer_id']){
 
@@ -69,7 +74,7 @@ if(!$_GET['offer_id']){
         $searchParameters['rooms']      = "%";
         $searchParameters['type']       = "%";
     }
-    $step = $_GET['step']>0 ? $_GET['step'] : 9;
+
     $offers = $perspektiva->searchOffers($pdo, $searchParameters['price'], $searchParameters['mortgage'],
                                          $searchParameters['rooms'], $searchParameters['type'], $pagination['start'], $pagination['step']);
 
@@ -169,5 +174,10 @@ else{
 
     </div>
 <?php
+//пагинация
+
+$p = $page->setCurrentPage($_GET['pages']);//$_GET['pages'] > 1 ? $_GET['pages'] : 1;
+
+$page->setTotalRows($pdo)->paginations($p);
 require_once 'include/footer.php';
 ?>

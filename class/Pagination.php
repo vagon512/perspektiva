@@ -20,7 +20,7 @@ class Pagination
 
     public function setCurrentPage($currentPage = 1){
         $this->currentPage = $currentPage;
-        return $this;
+        return $this->currentPage;
     }
 
     public function getPagination(){
@@ -33,7 +33,7 @@ class Pagination
         $result = $pdo->prepare($querySelectCountColumn);
         $result->execute();
         $this->totalRows = $result->fetchColumn();
-        return $this->totalRows;
+        return $this; //->totalRows;
     }
 
     public function checkingValuesForPagination(){
@@ -43,8 +43,8 @@ class Pagination
         return false;
     }
 
-    public function pagination(){
-        $total = $this->setTotalRows($pdo);
+    public function paginations($currentPage = 1){
+        $total = $this->totalRows;//setTotalRows($pdo);
         $pages = ceil($total/$this->step);
         $p = $currentPage > 1 ? $currentPage : 1;
         if($p > 1){
