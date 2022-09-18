@@ -48,10 +48,10 @@ class Pagination
         $pages = ceil($total/$this->step);
         $p = $currentPage > 1 ? $currentPage : 1;
         if($p > 1){
-            echo '<a href="?pages=1">1</a>'."&nbsp&nbsp...&nbsp&nbsp";
+            echo '<a href="?page=1">1</a>'."&nbsp&nbsp...&nbsp&nbsp";
         }
         for($i = $p; $i<= $p+5; $i++){
-            echo '<a href="?pages='.$i.'">'.$i."</a>&nbsp&nbsp";
+            echo '<a href="?page='.$i.'">'.$i."</a>&nbsp&nbsp";
         }
 
         echo '...&nbsp&nbsp<a href="?pages='.$pages.'">'.$pages."</a>";

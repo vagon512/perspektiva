@@ -2,8 +2,9 @@
 require_once 'include/head.php';
 require_once "class/Pagination.php";
 $page = new pagination();
-?>
 
+if(empty($_GET['offer_id'])) {
+    ?>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         фильтр
@@ -41,143 +42,176 @@ $page = new pagination();
                                 <option value="5">5</option>
                             </select>
                         </p>
-                        <p><input type="submit" value="F I N D" </p>
+                        <p><input type="submit" value="F I N D"</p>
                     </form>
                 </div>
 
             </div>
         </div>
     </div>
-<a href="sales.php"><button>сбросить</button></a>
-<a href="sales.php?step=9">показывать по 9</a>
+    <a href="sales.php">
+        <button>сбросить</button>
+    </a>
+    <a href="sales.php?step=9">показывать по 9</a>
     <a href="sales.php?step=12">показывать по 12</a>
     <a href="sales.php?step=18">показывать по 18</a>
-<?php
-$step = $_GET['step']>0 ? $_GET['step'] : 9;
-$start  = $_GET['page'] > 1 ? ($_GET['page']-1)*$step : 0;
+
+    <?php
+}
+?>
+
+ <?php
+$step = $_GET['step'] > 0 ? $_GET['step'] : 9;
+$start = $_GET['page'] > 1 ? ($_GET['page'] - 1) * $step : 0;
 $page->setStart($start);
 $page->setStep($step);
 $pagination = $page->getPagination();
 
-if(!$_GET['offer_id']){
-
-    $searchParameters = array();
-    if($_GET['select']==1){
-        $searchParameters['price']      = !empty($_GET['price']) ?  $_GET['price'] : "%";
-        $searchParameters['mortgage']   = $_GET['mortgage'];
-        $searchParameters['rooms']      = $_GET['room'];
-        $searchParameters['type']       = $_GET['type'];
-    }
-    else{
-        $searchParameters['price']      = "%";
-        $searchParameters['mortgage']   = "%";
-        $searchParameters['rooms']      = "%";
-        $searchParameters['type']       = "%";
-    }
-
-    $offers = $perspektiva->searchOffers($pdo, $searchParameters['price'], $searchParameters['mortgage'],
-                                         $searchParameters['rooms'], $searchParameters['type'], $pagination['start'], $pagination['step']);
-
-    ?>
-        <div class="row">
-
-    <?php
-    foreach ($offers as $offer){
-        ?>
-        <div class="col-sm-4">
-        <div class="card" style="width: 18rem;">
-
-
-    <?php
-
-        if(isset($offer['image_path'])){
-          echo '<img src="'.$offer['image_path'][0].'" class="card-img-top" alt="Нет изображения">';
-        }
-        else{
-            echo '<img src="pic/stock.png" class="card-img-top card-small" alt="Нет изображения">';
-        }?>
-        <div class="card-body">
-                <h5 class="card-title">
-                    <?php echo "{$offer['offer_name']} {$offer['category_name']}"  ?>
-                </h5>
-                <p class="card-text">
-                   <?php echo $offer['category_name']." ".$offer['area_value']." ".$offer['area_unit']?>
-                </p>
-                <a href="sales.php?offer_id=<?php echo $offer['offer_id'] ?>" class="btn btn-primary">К объявлению</a>
-            </div>
-        </div>
-        </div>
-    <?php
-    }
+$searchParameters = array();
+if ($_GET['select'] == 1) {
+    $searchParameters['select'] = 1;
+    $searchParameters['price'] = !empty($_GET['price']) ? $_GET['price'] : "%";
+    $searchParameters['mortgage'] = $_GET['mortgage'];
+    $searchParameters['rooms'] = $_GET['room'];
+    $searchParameters['type'] = $_GET['type'];
+} else {
+    $searchParameters['price'] = "%";
+    $searchParameters['mortgage'] = "%";
+    $searchParameters['rooms'] = "%";
+    $searchParameters['type'] = "%";
 }
 
-else{
-    $offers = $perspektiva->setOnceOffer($pdo, $_GET['offer_id']);
-?>
-    <div class="col-sm-6">
-    <div class="card" style="width: 25rem;" >
+if (!$_GET['offer_id']) {
 
-        <img src="pic/stock.png" class="d-block w-100 img-fluid" alt="фотография" data-bs-toggle="modal" data-bs-target="#photoset" style="width:640px;height:360px">
 
-        <!-- Modal -->
-        <div class="modal fade" id="photoset" tabindex="-1" aria-labelledby="photoset" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Фотографии</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php
-                                foreach ($offers['images'] as $image){
-                                    echo $image."<br>";
-                                    ?>
-                                    <div class="carousel-item ">
-                                        <img src="<?php echo $image; ?>" class="d-block w-100 " alt="фотография" style="width:360px;height:360px">
-                                    </div>
-                                    <?php
-                                }
-                                ?>
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                                    data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Предыдущий</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                                    data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Следующий</span>
-                            </button>
-                        </div>
-                    </div>
 
+    $offers = $perspektiva->searchOffers($pdo, $searchParameters['price'], $searchParameters['mortgage'],
+        $searchParameters['rooms'], $searchParameters['type'], $pagination['start'], $pagination['step']);
+
+    ?>
+    <div class="row">
+
+    <?php
+    foreach ($offers as $offer) {
+        ?>
+        <div class="col-sm-4">
+            <div class="card" style="width: 18rem;">
+
+
+                <?php
+
+                if (isset($offer['image_path'])) {
+                    echo '<img src="' . $offer['image_path'][0] . '" class="card-img-top" alt="Нет изображения">';
+                } else {
+                    echo '<img src="pic/stock.png" class="card-img-top card-small" alt="Нет изображения">';
+                } ?>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <?php echo "{$offer['offer_name']} {$offer['category_name']}" ?>
+                    </h5>
+                    <p class="card-text">
+                        <?php echo $offer['category_name'] . " " . $offer['area_value'] . " " . $offer['area_unit'] ?>
+                    </p>
+                    <a href="sales.php?offer_id=<?php echo $offer['offer_id'], "&select={$searchParameters['select']}&type={$searchParameters['type']}&price={$searchParameters['price']}&mortgage={$searchParameters['mortgage']}&room={$searchParameters['rooms']}"; ?>" class="btn btn-primary">К
+                        объявлению</a>
                 </div>
             </div>
         </div>
+        <?php
+    }
+} else {
+    $offers = $perspektiva->setOnceOffer($pdo, $_GET['offer_id']);
+    if(!empty($offers[0]['description'])){
+        $description = explode('.', $offers[0]['description']);
+        $description = array_diff_key($description, [0 => "xx", 1 =>'sd']);
+        $description = implode(".", $description);
+    }
+    else{
+        $description = "";
+    }
+
+    ?>
+    <div class="col-sm-6">
+    <div class="card" style="width: 25rem;">
+        <h5 class="card-title"><?php echo $offers[0]['offer_name']," ", $offers[0]['category_name'];?></h5>
+        <h6 class="card-subtitle mb-2 text-muted"><?php echo $offers[0]['price_value']," ",$offers[0]['price_currency'];?></h6>
+
+    <!--        <img src="pic/stock.png" class="d-block w-100 img-fluid" alt="фотография" data-bs-toggle="modal" data-bs-target="#photoset" style="width:640px;height:360px">-->
+
+    <!-- Modal -->
+    <?
+    if (!empty($offers['images'])) { ?>
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="pic/stock.png" class="d-block w-100 img-fluid" alt="фотография" style="width:640px;height:360px">
+        </div>
+        <?php
+        foreach ($offers['images'] as $image) {
+            ?>
+                    <div class="carousel-item">
+                        <img src="<?PHP echo $image; ?>" class="d-block w-100 img-fluid" alt="фотография" style="width:640px;height:360px">
+                    </div>
+            <?php
+        }
+        ?>
+        </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Следующий</span>
+            </button>
+        </div>
+        <?php
+    }
+    else{
+        ?>
+        <img src="pic/stock.png" class="d-block w-100 img-fluid" alt="фотография" style="width:640px;height:360px">
+        <?php
+    }
+        ?>
+        </div>
+        </div>
 
 
         <div class="card-body">
-            <?php
-            echo $offers[0]['creation_date']
-            ?>
+            <p>Площадь: <?php echo $offers[0]['area_value'], $offers[0]['area_unit'];  ?></p>
+            <p>Комнат: <?php echo $offers[0]['rooms'];  ?></p>
+            <p>Этаж: <?php echo $offers[0]['floors_total']>0 ? $offers[0]['floors_total'] : " ";  ?></p>
+            <p>место: <?php echo $offers[0]['location_locality_name'];  ?></p>
+            <p>год постройки: <?php echo $offers[0]['build_year']>0 ? $offers[0]['build_year'] : "не указан";  ?></p>
+            <p><?php echo $offers[0][''];  ?></p>
+            <p><?php echo $description;  ?></p></div>
         </div>
-    </div>
-    <?php
-}
+        <?php
+    }
 //echo "<pre>";
 //print_r($offers);
 //echo "</pre>";
-?>
+    ?>
 
     </div>
-<?php
+    <?php
+
 //пагинация
+    if (empty($_GET['offer_id'])) {
+        $p = $page->setCurrentPage($_GET['pages']);//$_GET['pages'] > 1 ? $_GET['pages'] : 1;
 
-$p = $page->setCurrentPage($_GET['pages']);//$_GET['pages'] > 1 ? $_GET['pages'] : 1;
+        $page->setTotalRows($pdo)->paginations($p);
+    } else {
+        if(!empty($searchParameters['select'])){
+            echo "<a href=sales.php?select={$searchParameters['select']}&type={$searchParameters['type']}&price={$searchParameters['price']}&mortgage={$searchParameters['mortgage']}&room={$searchParameters['rooms']}>вернуться</a>";
+        }
+        else{
+            echo "<a href=sales.php>вернуться</a>";
+        }
 
-$page->setTotalRows($pdo)->paginations($p);
-require_once 'include/footer.php';
-?>
+    }
+
+    require_once 'include/footer.php';
+    ?>
