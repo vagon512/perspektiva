@@ -52,36 +52,38 @@ if(empty($_GET['offer_id'])) {
     <a href="sales.php">
         <button>сбросить</button>
     </a>
-    <a href="sales.php?step=9">показывать по 9</a>
-    <a href="sales.php?step=12">показывать по 12</a>
-    <a href="sales.php?step=18">показывать по 18</a>
-
+    <p>показывать по
+    <a href="sales.php?step=9">  9</a>
+    <a href="sales.php?step=12">  12</a>
+    <a href="sales.php?step=18"> 18</a>
+    </p>
     <?php
 }
 ?>
 
  <?php
-$step = $_GET['step'] > 0 ? $_GET['step'] : 9;
-$start = $_GET['page'] > 1 ? ($_GET['page'] - 1) * $step : 0;
+$step = isset($_GET['step']) ? $_GET['step'] : 9;
+$start = isset($_GET['page']) && $_GET['page'] > 1 ? ($_GET['page'] - 1) * $step : 0;
 $page->setStart($start);
 $page->setStep($step);
 $pagination = $page->getPagination();
 
 $searchParameters = array();
-if ($_GET['select'] == 1) {
+if (isset($_GET['select']) && $_GET['select'] == 1) {
     $searchParameters['select'] = 1;
     $searchParameters['price'] = !empty($_GET['price']) ? $_GET['price'] : "%";
     $searchParameters['mortgage'] = $_GET['mortgage'];
     $searchParameters['rooms'] = $_GET['room'];
     $searchParameters['type'] = $_GET['type'];
 } else {
+    $searchParameters['select'] = 0;
     $searchParameters['price'] = "%";
     $searchParameters['mortgage'] = "%";
     $searchParameters['rooms'] = "%";
     $searchParameters['type'] = "%";
 }
 
-if (!$_GET['offer_id']) {
+if (!isset($_GET['offer_id'])) {
 
 
 
@@ -185,7 +187,7 @@ if (!$_GET['offer_id']) {
             <p>Этаж: <?php echo $offers[0]['floors_total']>0 ? $offers[0]['floors_total'] : " ";  ?></p>
             <p>место: <?php echo $offers[0]['location_locality_name'];  ?></p>
             <p>год постройки: <?php echo $offers[0]['build_year']>0 ? $offers[0]['build_year'] : "не указан";  ?></p>
-            <p><?php echo $offers[0][''];  ?></p>
+            
             <p><?php echo $description;  ?></p></div>
         </div>
         <?php
@@ -200,10 +202,13 @@ if (!$_GET['offer_id']) {
 
 //пагинация
     if (empty($_GET['offer_id'])) {
-        $p = $page->setCurrentPage($_GET['pages']);//$_GET['pages'] > 1 ? $_GET['pages'] : 1;
-
-        $page->setTotalRows($pdo)->paginations($p);
+        $p = isset($_GET['page']) ? $_GET['page'] : 1;
+        $page->setCurrentPage($p) ;//$_GET['pages'] > 1 ? $_GET['pages'] : 1;
+        $page->setData($searchParameters);
+        //$page->setTotalRows($pdo);
+        $page->setTotalRows($pdo)->paginations();
     } else {
+
         if(!empty($searchParameters['select'])){
             echo "<a href=sales.php?select={$searchParameters['select']}&type={$searchParameters['type']}&price={$searchParameters['price']}&mortgage={$searchParameters['mortgage']}&room={$searchParameters['rooms']}>вернуться</a>";
         }

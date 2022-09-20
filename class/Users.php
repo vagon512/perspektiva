@@ -82,5 +82,34 @@ class Users
 
     }
 
+    public function getUserData($pdo, $userName, $userPassword){
+        $data = array('email'=>$userName, 'login'=>$userName);
+        $querySelectUser = "SELECT * FROM users WHERE user_email = :email OR user_login = :login";
+        $row = $pdo->prepare($querySelectUser);
+        $row->execute($data);
+        $result = $row->fetch(PDO::FETCH_ASSOC);
+        if(isset($result['user_login']) && password_verify($userPassword.$result['salt'], $result['user_password'])){
+            $_SESSION['id'] = $result['user_id'];
+            $_SESSION['name'] = $result['user_name'];
+            $_SESSION['patronimyc'] = $result['user_patronymic'];
+            $_SESSION['sirname'] = $result['user_sirname'];
+            $_SESSION['login'] = $result['user_login'];
+            $_SESSION['email'] = $result['user_email'];
+            $_SESSION['privileges'] = $result['user_privileges'];
+            $_SESSION['errors'] = '';
+        }
+        else{
+            $_SESSION['errors'] = 'Неверный логин или пароль';
+        }
+
+        if(!empty($_SESSION['errors'])){
+            return false;
+        }
+        else{
+           return true;
+        }
+    }
+
+
 
 }

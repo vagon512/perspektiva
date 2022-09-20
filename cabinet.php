@@ -2,9 +2,11 @@
 
 require_once 'include/head.php';
 require_once 'class/Users.php';
+if(!isset($_SESSION['id'])){
 $user = new Users();
 
-switch($_GET['action']){
+$action = isset($_GET['action']) ? $_GET['action'] : "";
+switch($action){
     case 'registration':
 ?>
 
@@ -26,10 +28,10 @@ switch($_GET['action']){
     case 'enter':
 ?>
 
-        <form action="cabinet.php" method="post">
+        <form action="sign.php" method="post">
             <p>логин   <input type="text" name="login"></p>
             <p>
-                password: <input type="password" name="passwd"><br>
+                password: <input type="password" name="password"><br>
                 <button type="submit">GO</button>
             </p>
         </form>
@@ -67,9 +69,18 @@ if(isset($_POST['passwd'])){
     else{
         $data = $user->registration($pdo, $salt);
     }
-    echo "<pre>";
-    print_r($data);
-    echo "</pre>";
+//    echo "<pre>";
+//    print_r($data);
+//    echo "</pre>";
+}
+if(!empty($_SESSION['errors'])){
+    echo $_SESSION['errors'];
+    $_SESSION['errors']="";
+}
+}
+else{
+    //уже вошли
+    echo isset($_SESSION['name']) ? "<h2>Welcome back {$_SESSION['name']}</h2>" : "No name";
 }
 require_once 'include/footer.php';
 ?>

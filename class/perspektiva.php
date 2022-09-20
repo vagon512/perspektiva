@@ -207,7 +207,7 @@ class Perspektiva
                              JOIN offer_category on offers.category=offer_category.category_id  
                              WHERE offers.mortgage LIKE :mortgage
                              AND offers.rooms LIKE :rooms 
-                             AND offers.type LIKE :type 
+                             AND offers.type LIKE :type LIMIT $limit,$step
                              ";
         }
         else{
@@ -220,7 +220,7 @@ class Perspektiva
                              WHERE offers.price_value <= :price 
                              AND offers.mortgage LIKE :mortgage
                              AND offers.rooms LIKE :rooms 
-                             AND offers.type LIKE :type  
+                             AND offers.type LIKE :type LIMIT $limit,$step 
                              ";
 
         }
